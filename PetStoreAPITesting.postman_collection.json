@@ -1,0 +1,333 @@
+{
+	"info": {
+		"_postman_id": "c7f84ebd-6454-4a79-97ac-3834fea83f0a",
+		"name": "PetStoreAPITesting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PetTestsFolder",
+			"item": [
+				{
+					"name": "CreateNewPet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Pet was created on POST\", function() {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+									"});",
+									"",
+									"pm.test(\"Response time should less than 200ms\", function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"",
+									"pm.test(\"Response should contain 'name' tag\", function() {",
+									"    pm.response.to.have.jsonBody(\"name\");",
+									"});",
+									"",
+									"var createdPetID = pm.response.json().id;",
+									"var createdPetName = pm.response.json().name;",
+									"console.log(\"Pet id \" + createdPetID);",
+									"console.log(\"Pet name \" + createdPetName);",
+									"pm.collectionVariables.set(\"petName\", createdPetName);",
+									"pm.collectionVariables.set(\"petId\", createdPetID);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 2,\n  \"category\": {\n    \"id\": 101,\n    \"name\": \"Husky\"\n  },\n  \"name\": \"Worky\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 11,\n      \"name\": \"string\"\n    }\n  ],\n  \"status\": \"available\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pet",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCreatedPet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Found pet by ID\", function() {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+									"});",
+									"",
+									"var petId = pm.collectionVariables.get(\"petId\");",
+									"var petName = pm.collectionVariables.get(\"petName\");",
+									"",
+									"pm.test(\"Name and ID of created pet is in response\", function () {",
+									"    pm.expect(pm.response.text()).to.include(petName);",
+									"    pm.expect(pm.response.text()).to.contains(petId);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pet/{{petId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet",
+								"{{petId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCreatedPet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response should contain 'message' tag\", function() {",
+									"    pm.response.to.have.jsonBody(\"message\");    ",
+									"});",
+									"",
+									"pm.test(\"Deleted pet ID is correct\", function() {",
+									"    var deletedPetID = parseInt(pm.response.json().message);",
+									"    var expectedID = pm.collectionVariables.get(\"petId\");",
+									"   pm.expect(deletedPetID).to.equal(expectedID);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pet/{{petId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pet",
+								"{{petId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserTestsFolder",
+			"item": [
+				{
+					"name": "CreateNewUser",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"userName\", \"EvgeniiTest\");",
+									"pm.collectionVariables.set(\"userId\", 10);",
+									"pm.collectionVariables.set(\"password\", \"13579\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200. User is created\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"ID of a new user is correct\", function() {",
+									"    var createdUserID = parseInt(pm.response.json().message);",
+									"    var expectedID = pm.collectionVariables.get(\"userId\");",
+									"   pm.expect(createdUserID).to.equal(expectedID);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n  \"id\": 10,\n  \"username\": \"EvgeniiTest\",\n  \"firstName\": \"Evgenii\",\n  \"lastName\": \"Klimenko\",\n  \"email\": \"Evgenii@epam.com\",\n  \"password\": \"13579\",\n  \"phone\": \"8962\",\n  \"userStatus\": 0\n    }\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LoginTest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200. We are logged in\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Message has 'logged in user session' text\", function() {",
+									"    pm.expect(pm.response.text()).to.include(\"logged in user session\");   ",
+									"});",
+									"",
+									"// for practice",
+									"var responseMessage = pm.response.json().message;",
+									"userSession = responseMessage.slice(responseMessage.lastIndexOf(':') + 1);",
+									"console.log(\"User session ID: \" + userSession);",
+									"pm.collectionVariables.set(\"userSession\", userSession);",
+									"",
+									"// Clean up. Logout. How to use a global var baseUrl here? ",
+									"pm.sendRequest(\"https://petstore.swagger.io/v2/user/logout\", function (err, response) {",
+									"    console.log(\"LOG OUT:\\n\" + response.json());",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/login?username=EvgeniiTest&password=13579",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "EvgeniiTest"
+								},
+								{
+									"key": "password",
+									"value": "13579"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTestUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var expectedUserName = pm.collectionVariables.get(\"userName\");",
+									"var responseMessage = pm.response.json().message;",
+									"",
+									"pm.test(\"Message in response contains deleted user name.\", function () {",
+									"    pm.expect(responseMessage).to.include(expectedUserName);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/EvgeniiTest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"EvgeniiTest"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "petName",
+			"value": ""
+		},
+		{
+			"key": "petId",
+			"value": ""
+		},
+		{
+			"key": "userName",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "userSession",
+			"value": ""
+		}
+	]
+}
