@@ -1,7 +1,7 @@
 package core;
 
-import constants.Language;
 import org.testng.annotations.DataProvider;
+
 import static constants.Language.*;
 import static constants.Texts.*;
 
@@ -52,6 +52,16 @@ public class DataProvidersForSpeller {
         };
     }
 
-
+    @DataProvider
+    public Object[][] multiTextsProvider() {
+        String[] arrEng = {ENG_WITH_DIGITS, ENG_MISSPELLED};
+        String[] arrRus = {RUS_WITH_DIGITS, RUS_MISSPELLED};
+        String[] arrUkr = {UKR_WITH_DIGITS, UKR_MISSPELLED};
+        return new Object[][]{
+                {ENGLISH, arrEng},
+                {RUSSIAN, arrRus},
+                {UKRAINIAN, arrUkr}
+        };
+    }
 
 }

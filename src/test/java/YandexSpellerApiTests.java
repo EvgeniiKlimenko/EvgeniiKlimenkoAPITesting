@@ -1,4 +1,5 @@
-import beans.YandexSpellerAnswer;
+import io.restassured.response.Response;
+import model.YandexSpellerAnswer;
 import constants.AnswerField;
 import constants.Language;
 import core.DataProvidersForSpeller;
@@ -6,6 +7,7 @@ import io.restassured.http.Method;
 import org.hamcrest.MatcherAssert;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static constants.Option.*;
@@ -18,7 +20,16 @@ import static core.YandexSpellerServiceObj.*;
 import static org.hamcrest.Matchers.*;
 
 public class YandexSpellerApiTests {
-    /* */
+    /*
+     * КТРЛ+АЛЬТ+Л (+)
+     * Второй вариант ответа (+)
+     * Структура проекта    (+)
+     * SPELLER_URI в проперти и сделать класс контейнер (+)
+     * Пару тестов для checkTexts(...)
+     *
+     * To generate pojo from JSON with terminal: mvn jsonschema2pojo:generate
+     * */
+
     @Test(dataProvider = "correctTextsProvider",
             dataProviderClass = DataProvidersForSpeller.class)
     public void checkCorrectTexts(Language language, String text) {
@@ -182,7 +193,24 @@ public class YandexSpellerApiTests {
                 .body(containsString("SpellerService: Invalid parameter 'format'"));
     }
 
+    // russian test failed. In response - empty JSON. Other languages work fine
+    @Test(dataProvider = "multiTextsProvider",
+            dataProviderClass = DataProvidersForSpeller.class)
+    public void checkTextsTest(Language language, String[] text) {
+        Response yaResponse = requestBuilder()
+                .setLanguage(language)
+                .setText(text)
+                .buildRequest()
+                .sendCheckTextsRequest();
 
+        List<String> result = getStringResultArray(yaResponse);
+        MatcherAssert.assertThat("API failed to give suggestions with correct words: " + text,
+                result.containsAll(Arrays.asList(text)));
 
-/* */
+        List<String> resultSuggestions = getStringSuggestionsArray(yaResponse);
+        String[] expectedSuggestions = {ENG_MISSPELLED_CORRECTION, ENG_CORRECT, RUS_CORRECT, UKR_CORRECT};
+        MatcherAssert.assertThat("No expected suggestions in text: " + text,
+                resultSuggestions.stream().anyMatch(el -> Arrays.asList(expectedSuggestions).contains(el)));
+    }
+
 }
