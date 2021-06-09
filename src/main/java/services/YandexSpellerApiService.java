@@ -21,7 +21,11 @@ import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static constants.Format.HTML;
+import static constants.Language.ENGLISH;
+import static constants.Option.IGNORE_DIGITS;
 import static constants.ParameterName.*;
+import static constants.Texts.ENG_CORRECT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -81,6 +85,49 @@ public class YandexSpellerApiService {
 
     }
 
+
+    public static Response setUpAndSendRequest(Method method, Language lang, String... text) {
+        return requestBuilder()
+                .setLanguage(lang)
+                .setText(text)
+                .setMethod(method)
+                .buildRequest()
+                .sendRequest();
+    }
+
+    public static Response setUpAndSendRequest(Language lang, String... text) {
+        return requestBuilder()
+                .setLanguage(lang)
+                .setText(text)
+                .buildRequest()
+                .sendRequest();
+    }
+
+    public static Response setUpAndSendRequest(Language lang, Option opt, String... text) {
+        return requestBuilder()
+                .setLanguage(lang)
+                .setText(text)
+                .setOptions(opt)
+                .buildRequest()
+                .sendRequest();
+    }
+
+    public static Response setUpAndSendRequest(Language lang, Format format, String... text) {
+        return requestBuilder()
+                .setLanguage(lang)
+                .setText(text)
+                .setFormat(format)
+                .buildRequest()
+                .sendRequest();
+    }
+
+    public static Response setUpAndSendTextsRequest(Language lang, String... text) {
+        return requestBuilder()
+                .setLanguage(lang)
+                .setText(text)
+                .buildRequest()
+                .sendCheckTextsRequest();
+    }
 
     public Response sendRequest() {
         return RestAssured
