@@ -6,7 +6,6 @@ import io.restassured.http.Method;
 import org.testng.annotations.Test;
 import services.AssertionService;
 import services.YandexSpellerApiService;
-
 import java.util.List;
 
 import static constants.Option.*;
@@ -77,7 +76,6 @@ public class YandexSpellerApiTests {
     public void checkIncorrectProperNamesWithLowerCase(Language language, String text) {
         Response yaResponse = YandexSpellerApiService.setUpAndSendRequest(language, text);
         List<String> result = getStringResult(yaResponse);
-
         assertionService.textWithLowerCaseFound(result, text);
     }
 
@@ -107,7 +105,6 @@ public class YandexSpellerApiTests {
     public void checkIncorrectFormatOption() {
         Response yaResponse = YandexSpellerApiService.setUpAndSendRequest(ENGLISH, INCORRECT_FORMAT, ENG_CORRECT);
         assertionService.checkCorrectFormat(yaResponse);
-
         assertionService.shouldFindIncorrectFormat(yaResponse);
     }
 
@@ -116,11 +113,9 @@ public class YandexSpellerApiTests {
             dataProviderClass = DataProvidersForSpeller.class)
     public void checkTextsTest(Language language, String[] text) {
         Response yaResponse = YandexSpellerApiService.setUpAndSendTextsRequest(language, text);
-
         List<String> result = YandexSpellerApiService.getStringResultArray(yaResponse);
         List<String> resultSuggestions = YandexSpellerApiService.getStringSuggestionsArray(yaResponse);
         String[] expectedSuggestions = {ENG_MISSPELLED_CORRECTION, ENG_CORRECT, RUS_CORRECT, UKR_CORRECT};
-
         assertionService.resultContainsSentText(result, text);
         assertionService.correctWordsInSuggestions(resultSuggestions, expectedSuggestions, text);
     }

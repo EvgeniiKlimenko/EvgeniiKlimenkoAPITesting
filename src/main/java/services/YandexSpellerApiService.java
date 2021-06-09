@@ -16,16 +16,11 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.apache.http.HttpStatus;
 import utils.PropertiesHolder;
-
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static constants.Format.HTML;
-import static constants.Language.ENGLISH;
-import static constants.Option.IGNORE_DIGITS;
 import static constants.ParameterName.*;
-import static constants.Texts.ENG_CORRECT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
