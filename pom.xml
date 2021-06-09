@@ -18,6 +18,7 @@
         <testng.version>7.3.0</testng.version>
         <commons-lang.version>2.6</commons-lang.version>
         <aspectj.version>1.8.12</aspectj.version>
+        <lombok.version>1.18.12</lombok.version>
 
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
@@ -25,6 +26,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>

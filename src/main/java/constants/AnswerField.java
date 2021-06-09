@@ -9,5 +9,6 @@ public enum AnswerField {
 
     AnswerField(String name) {
         this.name = name;
-    };
+    }
+
 }

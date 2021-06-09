@@ -1,4 +1,4 @@
-package core;
+package services;
 
 import model.YandexSpellerAnswer;
 import com.google.gson.Gson;
@@ -14,7 +14,6 @@ import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import model.YandexSpellerAnswersArray;
 import org.apache.http.HttpStatus;
 import utils.PropertiesHolder;
 
@@ -26,7 +25,7 @@ import static constants.ParameterName.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class YandexSpellerServiceObj {
+public class YandexSpellerApiService {
     public static final URI SPELLER_CHECK_TEXT_URI = URI
             .create(PropertiesHolder.PROPS.getProperty("speller.checkText.url"));
     public static final URI SPELLER_CHECK_TEXTS_URI = URI
@@ -35,7 +34,7 @@ public class YandexSpellerServiceObj {
     private Method requestMethod;
     private Map<String, String> parameters;
 
-    private YandexSpellerServiceObj(Map<String, String> parameters, Method method) {
+    private YandexSpellerApiService(Map<String, String> parameters, Method method) {
         this.parameters = parameters;
         this.requestMethod = method;
     }
@@ -76,8 +75,8 @@ public class YandexSpellerServiceObj {
             return this;
         }
 
-        public YandexSpellerServiceObj buildRequest() {
-            return new YandexSpellerServiceObj(parameters, requestMethod);
+        public YandexSpellerApiService buildRequest() {
+            return new YandexSpellerApiService(parameters, requestMethod);
         }
 
     }
@@ -143,14 +142,14 @@ public class YandexSpellerServiceObj {
                 .build();
     }
 
-    public static List<List<YandexSpellerAnswersArray>> getAnswersArray(Response response) {
+    public static List<List<YandexSpellerAnswer>> getAnswersArray(Response response) {
         return new Gson()
-                .fromJson(response.asString().trim(), new TypeToken<List<List<YandexSpellerAnswersArray>>>() {
+                .fromJson(response.asString().trim(), new TypeToken<List<List<YandexSpellerAnswer>>>() {
                 }.getType());
     }
 
     public static List<String> getStringResultArray(Response response) {
-        List<List<YandexSpellerAnswersArray>> fromJson = getAnswersArray(response);
+        List<List<YandexSpellerAnswer>> fromJson = getAnswersArray(response);
         List<String> wordList = new ArrayList<String>();
         fromJson.stream()
                 .forEach(yandexSpellerAnswerArray -> yandexSpellerAnswerArray.stream()
@@ -159,12 +158,12 @@ public class YandexSpellerServiceObj {
     }
 
     public static List<String> getStringSuggestionsArray(Response response) {
-        List<List<YandexSpellerAnswersArray>> fromJson = getAnswersArray(response);
+        List<List<YandexSpellerAnswer>> fromJson = getAnswersArray(response);
         List<String> suggestionsList = new ArrayList<String>();
         fromJson.stream()
-                .forEach(yandexSpellerAnswerArray -> yandexSpellerAnswerArray.stream()
+                .forEach(yandexSpellerAnswer -> yandexSpellerAnswer.stream()
                         .forEach(yandexAnswer -> yandexAnswer.getS()
-                            .forEach(suggestion -> suggestionsList.add(suggestion))));
+                                .forEach(suggestion -> suggestionsList.add(suggestion))));
         return suggestionsList;
     }
 
